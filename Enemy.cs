@@ -8,10 +8,11 @@ public class Enemy : MonoBehaviour {
 
 	Rigidbody rb;
 	Animator anim;
-	CapsuleCollider cc;
+    CapsuleCollider cc;
+    [SerializeField]CapsuleCollider cc2;
 	[SerializeField]
 	GameObject essencia;
-
+    GameObject enemy;
 	Vector3 posEssencia;
 
 	bool dir = false, esq = true;
@@ -102,9 +103,13 @@ public class Enemy : MonoBehaviour {
 			anim.SetBool("Walking", false);
 			anim.SetBool("Attacking", false);
 			anim.SetBool("Idle", false);
-			cc.enabled = false;
-			
-			Invoke("Morrer", 3f);
+            rb.useGravity = false;
+            cc.enabled = false;
+            cc2.enabled = false;
+            //GetComponent<CapsuleCollider>().enabled = false;
+            //GetComponent<CapsuleCollider>().enabled = false;
+
+            Invoke("Morrer", 3f);
 		}
 
 		Atacar();

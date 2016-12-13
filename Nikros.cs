@@ -12,7 +12,7 @@ public class Nikros : MonoBehaviour {
 	LayerMask Ground;
 
 	[SerializeField]
-	GameObject HUD;
+	GameObject HUD, gameOverTxt;
 
 	[SerializeField]
 	BoxCollider colEspada;
@@ -38,6 +38,11 @@ public class Nikros : MonoBehaviour {
 
 	bool sofreuAtaque;
 
+	[SerializeField]
+	AudioSource walking, jump, swordSwing, takingHit;
+
+	bool dialogo;
+
 	// Use this for initialization
 	void Start () {
 		vel = 10;
@@ -47,6 +52,13 @@ public class Nikros : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+		if (dialogo == true) 
+		{
+			walking.Stop ();
+			jump.Stop ();
+			canWalk = false;
+		}
 
 		if (sofreuAtaque == true) 
 		{
@@ -61,6 +73,10 @@ public class Nikros : MonoBehaviour {
 		if (morreu == true) 
 		{
 			animador.SetBool("Dying", true);
+			gameOverTxt.SetActive (true);
+			Invoke ("ToMenu", 4f);
+			walking.Stop ();
+			jump.Stop ();
 		}
 
 		if(sword1 == false && sword2 == false && sword3 == false)
@@ -77,11 +93,15 @@ public class Nikros : MonoBehaviour {
 			sword.transform.rotation = swordPlaceAttacking.transform.rotation;
 		}
 
-		if (sword1 == false && sword2 == false && sword3 == false) 
-		{
+		if (sword1 == false && sword2 == false && sword3 == false) {
 			canWalk = true;
-		} else
+		}
+
+		else 
+		{
 			canWalk = false;
+			rb.velocity = new Vector3 (0, 0, 0);
+		}
 
 		if (sword1 == true) 
 		{
@@ -135,20 +155,6 @@ public class Nikros : MonoBehaviour {
 			pular = true;
 		}
 
-		
-		/*
-		if (rcinfo.collider != null) {
-			onGround = true;
-		} 
-
-		else 
-		{
-			onGround = false;
-		}
-
-		Debug.Log (onGround);
-		*/
-
 		if (morreu == false) {
 			if (canWalk == true) {
 				rb.velocity = new Vector3 (Input.GetAxis ("Horizontal") * 7, rb.velocity.y, rb.velocity.z);
@@ -156,17 +162,37 @@ public class Nikros : MonoBehaviour {
 
 			if (Input.GetKeyDown (KeyCode.Space) && onGround == true) {
 				rb.velocity = new Vector3 (rb.velocity.x, 7, rb.velocity.z);
+				jump.Play ();
 				pular = true;
 			}
 
+			if (Input.GetKeyDown (KeyCode.D) || Input.GetKeyDown (KeyCode.RightArrow)) 
+			{
+				if (canWalk == true && onGround == true)
+				{
+					walking.Play ();
+				}
+			}
 
+			if (Input.GetKeyDown (KeyCode.A) || Input.GetKeyDown (KeyCode.LeftArrow))
+			{
+				if (canWalk == true && onGround == true)
+				{
+					walking.Play ();
+				}
+			}
 
 			if (Input.GetKey (KeyCode.D) || Input.GetKey (KeyCode.RightArrow)) {
+				
 				correr = true;
 				transform.eulerAngles = new Vector3 (transform.eulerAngles.x, 90, transform.eulerAngles.z);
 			}
 
 			if (Input.GetKeyUp (KeyCode.D) || Input.GetKeyUp (KeyCode.RightArrow)) {
+				if (canWalk == true && onGround == true)
+				{
+					walking.Stop ();
+				}
 				correr = false;
 			}
 
@@ -175,6 +201,10 @@ public class Nikros : MonoBehaviour {
 				transform.eulerAngles = new Vector3 (transform.eulerAngles.x, 270, transform.eulerAngles.z);
 			} else if 
 			(Input.GetKeyUp (KeyCode.A) || Input.GetKeyUp (KeyCode.LeftArrow)) {
+				if (canWalk == true && onGround == true)
+				{
+					walking.Stop ();
+				}
 				correr = false;
 			}
 
@@ -182,17 +212,20 @@ public class Nikros : MonoBehaviour {
 				if (Input.GetKeyDown (KeyCode.J)) {
 
 					if (sword1 == false && sword2 == false && sword3 == false) {
+						swordSwing.Play ();
 						animador.SetTrigger ("Sword1");
 						sword1 = true;
 				
 					} else if (sword1 == true) {
 						if (podeApertar == true) {
+							swordSwing.Play ();
 							animador.SetTrigger ("Sword2");
 							sword2 = true;
 						}
 					}
 
 					if (sword2 == true && sword1 == false) {
+						swordSwing.Play ();
 						animador.SetTrigger ("Sword3");
 						sword3 = true;
 					}
@@ -232,6 +265,7 @@ public class Nikros : MonoBehaviour {
 		{
 			if(sofreuAtaque == false)
 			{
+				takingHit.Play ();
 				HUD.GetComponent<HUD>().setVida(-0.2f);
 				sofreuAtaque = true;
 			}
@@ -240,11 +274,13 @@ public class Nikros : MonoBehaviour {
 
 		if (col.tag.Equals ("Spike")) 
 		{
+			takingHit.Play ();
 			HUD.GetComponent<HUD>().setVida(-1);
 		}
 
 		if (col.tag.Equals ("LittleSpike")) 
 		{
+			takingHit.Play ();
 			HUD.GetComponent<HUD>().setVida(-0.2f);
 		}
 	}
@@ -257,5 +293,25 @@ public class Nikros : MonoBehaviour {
 	void GameOver()
 	{
 		SceneManager.LoadScene ("Menu");
+	}
+
+	void ToMenu()
+	{
+		SceneManager.LoadScene("Menu");
+	}
+
+	public bool GetMorrer()
+	{
+		return morreu;
+	}
+
+	public void SetCanWalk(bool valor)
+	{
+		canWalk = valor;
+	}
+
+	public void SetDialogo(bool valor)
+	{
+		dialogo = valor;
 	}
 }

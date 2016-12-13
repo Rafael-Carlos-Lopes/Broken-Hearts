@@ -8,6 +8,8 @@ public class MenuIniciar : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		PlayerPrefs.SetFloat ("Vida", 1);
+		PlayerPrefs.SetInt ("NumDeEssencias", 0);
 		sr = GetComponent<SpriteRenderer> ();
 	}
 	
@@ -28,6 +30,6 @@ public class MenuIniciar : MonoBehaviour {
 
 	void OnMouseDown()
 	{
-		SceneManager.LoadScene("cena1");
+		SceneManager.LoadScene("Introducao");
 	}
 }

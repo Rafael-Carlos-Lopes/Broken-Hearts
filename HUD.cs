@@ -23,7 +23,7 @@ public class HUD : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		PlayerPrefs.SetFloat ("Vida", 1); //nao esquecer de comentar depois
+		//PlayerPrefs.SetFloat ("Vida", 1); //nao esquecer de comentar depois
 		//	PlayerPrefs.SetInt ("NumDeEssencias", 0);
 		vida = PlayerPrefs.GetFloat ("Vida");
 		numDeEssenciasInt = PlayerPrefs.GetInt("NumDeEssencias");
@@ -47,8 +47,17 @@ public class HUD : MonoBehaviour {
 
 		barraDeVida.localScale = new Vector3 (vida, barraDeVida.localScale.y, barraDeVida.localScale.z);
 
+		if (vida > 1) 
+		{
+			vida = 1;
+		}
+
 		if (barraDeVida.localScale.x < 0) {
 			barraDeVida.localScale = new Vector3(0,barraDeVida.localScale.y, barraDeVida.localScale.z);
+		}
+
+		if (barraDeVida.localScale.x > 1) {
+			barraDeVida.localScale = new Vector3(1,barraDeVida.localScale.y, barraDeVida.localScale.z);
 		}
 
 		if(barraDeVida.localScale.x <= 0)
